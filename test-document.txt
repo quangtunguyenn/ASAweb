@@ -1,0 +1,20 @@
+AI Study Assistant - Test Document
+===================================
+
+This is a sample study material for testing the file upload feature.
+
+Key Topics:
+1. Java 21 Virtual Threads - Improved concurrency model
+2. Spring Boot 3.3.5 - Latest framework features
+3. MySQL Integration - Database connectivity
+4. REST API Design - Best practices
+
+Learning Objectives:
+- Understand modern Java features
+- Build scalable web applications
+- Implement AI-powered study tools
+
+Sample Content: The virtual thread model in Java 21 represents a significant 
+improvement in how we handle concurrent operations. Unlike traditional platform 
+threads, virtual threads are lightweight and can be created in large numbers 
+without significant overhead.
