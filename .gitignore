@@ -1,8 +1,6 @@
 # Backend
 backend/target/
 backend/.mvn/
-backend/mvnw
-backend/mvnw.cmd
 backend/HELP.md
 backend/.idea/
 backend/*.iml
@@ -18,6 +16,7 @@ frontend/dist/
 # IDE
 .vscode/
 .idea/
+.history/
 *.swp
 *.swo
 *~
@@ -28,7 +27,18 @@ Thumbs.db
 
 # Logs
 *.log
+hs_err_*.log
+replay_*.log
 
 # Environment variables
 .env
 .env.local
+
+# Documentation (keep only README.md)
+*_SUMMARY.md
+*_COMPLETE.md
+*_GUIDE.md
+*_CHECKLIST.md
+*.ps1
+test-*.txt
+test-*.html
