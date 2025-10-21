@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards - AI Study Assistant</title>
+    <link rel="stylesheet" href="../css/common.css?v=2.0">
+    <link rel="stylesheet" href="../css/study-engine-modern.css?v=1.0">
+    <style>
+        .flashcards-page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .flashcards-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .flashcards-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+        
+        .flashcards-header p {
+            font-size: 1.125rem;
+            color: var(--gray-600);
+        }
+        
+        .document-selector {
+            margin-bottom: 2rem;
+        }
+        
+        .document-selector select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            font-family: inherit;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .flashcard-container {
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+        
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-2xl);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            text-align: center;
+        }
+        
+        .flashcard-front {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .flashcard-back {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            transform: rotateY(180deg);
+        }
+        
+        .flashcard-category {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .flashcard-text {
+            font-size: 1.75rem;
+            font-weight: 600;
+            line-height: 1.5;
+            margin-bottom: 2rem;
+        }
+        
+        .flashcard-hint {
+            position: absolute;
+            bottom: 2rem;
+            font-size: 0.95rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .flashcard-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .flashcard-nav {
+            padding: 0.875rem 2rem;
+            background: white;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .flashcard-nav:hover {
+            background: var(--gray-50);
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .flashcard-nav:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .flashcard-counter {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+        
+        .flashcard-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .action-btn.know {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .action-btn.know:hover {
+            background: rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.learning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        .action-btn.learning:hover {
+            background: rgba(245, 158, 11, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.dont-know {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+        
+        .action-btn.dont-know:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-card.know .stat-value {
+            color: var(--success);
+        }
+        
+        .stat-card.learning .stat-value {
+            color: var(--warning);
+        }
+        
+        .stat-card.total .stat-value {
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+        
+        .empty-state {
+            background: white;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-xl);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+        
+        .empty-state svg {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 2rem;
+            color: var(--gray-300);
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            color: var(--gray-700);
+            margin-bottom: 1rem;
+        }
+        
+        .empty-state p {
+            font-size: 1.125rem;
+            color: var(--gray-500);
+            margin-bottom: 2rem;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">🤖</span>
+                <span class="logo-text">AI Study</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="../dashboard-new.html" class="nav-item">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span class="nav-text">Dashboard</span>
+            </a>
+
+            <a href="study-engine-new.html" class="nav-item">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                </svg>
+                <span class="nav-text">AI Study Engine</span>
+            </a>
+
+            <a href="quiz.html" class="nav-item">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                </svg>
+                <span class="nav-text">Quiz Practice</span>
+            </a>
+
+            <a href="flashcards.html" class="nav-item active">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                <span class="nav-text">Flashcards</span>
+            </a>
+
+            <a href="documents.html" class="nav-item">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span class="nav-text">My Documents</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">JD</div>
+                <div class="user-info">
+                    <div class="user-name">John Doe</div>
+                    <div class="user-email">john@example.com</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="flashcards-page-container">
+            <div class="flashcards-header">
+                <h1>🎴 Flashcards</h1>
+                <p>Master concepts with spaced repetition learning</p>
+            </div>
+
+            <!-- Document Selector -->
+            <div class="document-selector">
+                <select id="documentSelect">
+                    <option value="">Select a document to study...</option>
+                    <option value="1">Machine Learning Basics</option>
+                    <option value="2">React Hooks Tutorial</option>
+                    <option value="3">Python Data Structures</option>
+                </select>
+            </div>
+
+            <!-- Flashcard Content -->
+            <div id="flashcardContent" style="display: none;">
+                <div class="flashcard-container">
+                    <div class="flashcard" id="flashcard" onclick="flipCard()">
+                        <div class="flashcard-face flashcard-front">
+                            <span class="flashcard-category">React Hooks</span>
+                            <div class="flashcard-text" id="frontText">
+                                What is the useState hook used for?
+                            </div>
+                            <div class="flashcard-hint">
+                                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"/>
+                                </svg>
+                                Click to flip
+                            </div>
+                        </div>
+                        <div class="flashcard-face flashcard-back">
+                            <span class="flashcard-category">React Hooks</span>
+                            <div class="flashcard-text" id="backText">
+                                useState is a Hook that lets you add state to function components. It returns a pair: the current state value and a function to update it.
+                            </div>
+                            <div class="flashcard-hint">
+                                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"/>
+                                </svg>
+                                Click to flip back
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard-controls">
+                    <button class="flashcard-nav" onclick="previousCard()" id="prevBtn">← Previous</button>
+                    <div class="flashcard-counter">
+                        <span id="currentCard">1</span> / <span id="totalCards">15</span>
+                    </div>
+                    <button class="flashcard-nav" onclick="nextCard()" id="nextBtn">Next →</button>
+                </div>
+
+                <div class="flashcard-actions">
+                    <button class="action-btn dont-know" onclick="markCard('dont-know')">
+                        ❌ Don't Know
+                    </button>
+                    <button class="action-btn learning" onclick="markCard('learning')">
+                        📚 Still Learning
+                    </button>
+                    <button class="action-btn know" onclick="markCard('know')">
+                        ✅ I Know This
+                    </button>
+                </div>
+
+                <div class="progress-stats">
+                    <div class="stat-card know">
+                        <div class="stat-value" id="knownCount">0</div>
+                        <div class="stat-label">Known</div>
+                    </div>
+                    <div class="stat-card learning">
+                        <div class="stat-value" id="learningCount">0</div>
+                        <div class="stat-label">Learning</div>
+                    </div>
+                    <div class="stat-card total">
+                        <div class="stat-value" id="totalCount">15</div>
+                        <div class="stat-label">Total Cards</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                <h3>No Document Selected</h3>
+                <p>Select a document from the dropdown above to start studying with flashcards</p>
+                <a href="study-engine-new.html" class="btn btn-primary">
+                    Upload New Document
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../js/auth.js"></script>
+    <script>
+        let knownCards = 0;
+        let learningCards = 0;
+        
+        document.getElementById('documentSelect').addEventListener('change', function() {
+            if (this.value) {
+                document.getElementById('flashcardContent').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'none';
+            } else {
+                document.getElementById('flashcardContent').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+            }
+        });
+        
+        function flipCard() {
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.toggle('flipped');
+        }
+        
+        function previousCard() {
+            alert('Previous card feature will be implemented with backend integration');
+        }
+        
+        function nextCard() {
+            const flashcard = document.getElementById('flashcard');
+            flashcard.classList.remove('flipped');
+            alert('Next card feature will be implemented with backend integration');
+        }
+        
+        function markCard(status) {
+            if (status === 'know') {
+                knownCards++;
+                document.getElementById('knownCount').textContent = knownCards;
+            } else if (status === 'learning') {
+                learningCards++;
+                document.getElementById('learningCount').textContent = learningCards;
+            }
+            
+            // Move to next card
+            setTimeout(() => {
+                nextCard();
+            }, 300);
+        }
+        
+        console.log('✅ Flashcards Page Loaded');
+    </script>
+</body>
+</html>

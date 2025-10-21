@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Study Engine - AI Study Assistant</title>
+    <link rel="stylesheet" href="../css/common.css?v=2.0">
+    <link rel="stylesheet" href="../css/study-engine-modern.css?v=1.0">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">🤖</span>
+                <span class="logo-text">AI Study</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="../dashboard-new.html" class="nav-item">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span class="nav-text">Dashboard</span>
+            </a>
+
+            <a href="study-engine-new.html" class="nav-item active">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                </svg>
+                <span class="nav-text">AI Study Engine</span>
+                <span class="nav-badge">NEW</span>
+            </a>
+
+            <a href="quiz.html" class="nav-item">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                </svg>
+                <span class="nav-text">Quiz Practice</span>
+            </a>
+
+            <a href="flashcards.html" class="nav-item">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                <span class="nav-text">Flashcards</span>
+            </a>
+
+            <a href="documents.html" class="nav-item">
+                <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span class="nav-text">My Documents</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-profile" id="userProfile">
+                <div class="user-avatar">JD</div>
+                <div class="user-info">
+                    <div class="user-name">John Doe</div>
+                    <div class="user-email">john@example.com</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Header -->
+        <header class="top-header">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="page-title-section">
+                <h1 class="page-title">🤖 AI Study Engine</h1>
+                <p class="page-subtitle">Upload documents and chat with AI about your study materials</p>
+            </div>
+
+            <div class="header-actions">
+                <button class="icon-btn" id="notificationBtn">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                    </svg>
+                    <span class="notification-badge">3</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="page-content">
+            <style>
+                /* Vertical Layout - Full Page Scroll */
+                .page-content { 
+                    padding: 1.5rem;
+                    overflow-y: auto;
+                }
+                
+                .vertical-layout {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 1.5rem;
+                    min-height: 100%;
+                }
+                
+                /* Upload Section - Full Width */
+                .upload-section-full {
+                    width: 100%;
+                }
+                
+                /* Chat Section - Full Width */
+                .chat-section-full {
+                    width: 100%;
+                    min-height: 600px;
+                }
+                
+                /* Documents Section - Full Width */
+                .docs-section-full {
+                    width: 100%;
+                }
+                
+                .chat-card-expanded {
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    background: white;
+                    border-radius: var(--radius-xl);
+                    box-shadow: var(--shadow-xl);
+                    overflow: hidden;
+                }
+                
+                .chat-header-big {
+                    padding: 1.5rem;
+                    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(168, 85, 247, 0.08) 100%);
+                    border-bottom: 2px solid var(--gray-100);
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+                
+                .chat-header-big h2 {
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    margin: 0;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                }
+                
+                .chat-body-big {
+                    flex: 1;
+                    overflow-y: auto;
+                    padding: 1.5rem;
+                }
+                
+                .chat-footer-big {
+                    padding: 1.5rem;
+                    background: var(--gray-50);
+                    border-top: 2px solid var(--gray-100);
+                }
+                
+                .chat-input-row {
+                    display: flex;
+                    gap: 0.75rem;
+                    align-items: flex-end;
+                }
+                
+                .chat-input-big {
+                    flex: 1;
+                    padding: 1rem 1.25rem;
+                    border: 2px solid var(--gray-200);
+                    border-radius: var(--radius-lg);
+                    font-size: 1rem;
+                    resize: none;
+                    max-height: 120px;
+                    font-family: inherit;
+                }
+                
+                .chat-input-big:focus {
+                    outline: none;
+                    border-color: var(--primary);
+                    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+                }
+                
+                .send-btn-big {
+                    padding: 1rem 1.75rem;
+                    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+                    border: none;
+                    border-radius: var(--radius-lg);
+                    color: white;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+                
+                .send-btn-big:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+                }
+                
+                .quick-actions-row {
+                    display: flex;
+                    gap: 0.75rem;
+                    margin-top: 1rem;
+                    flex-wrap: wrap;
+                }
+                
+                .quick-btn {
+                    padding: 0.5rem 1rem;
+                    background: white;
+                    border: 2px solid var(--gray-200);
+                    border-radius: 9999px;
+                    font-size: 0.875rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                
+                .quick-btn:hover {
+                    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+                    color: white;
+                    border-color: transparent;
+                }
+                
+                /* Documents Grid */
+                .documents-grid-modern {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                    gap: 1.5rem;
+                    margin-top: 1rem;
+                }
+                
+                .doc-card-modern {
+                    background: white;
+                    border: 2px solid var(--gray-100);
+                    border-radius: var(--radius-lg);
+                    padding: 1.5rem;
+                    transition: all 0.3s;
+                    cursor: pointer;
+                }
+                
+                .doc-card-modern:hover {
+                    border-color: var(--primary);
+                    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15);
+                    transform: translateY(-4px);
+                }
+                
+                .doc-icon-large {
+                    width: 60px;
+                    height: 60px;
+                    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+                    border-radius: var(--radius-md);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 2rem;
+                    margin-bottom: 1rem;
+                }
+                
+                .doc-card-modern h4 {
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    margin: 0 0 0.5rem 0;
+                    color: var(--gray-900);
+                }
+                
+                .doc-meta-modern {
+                    font-size: 0.875rem;
+                    color: var(--gray-600);
+                    margin: 0 0 1rem 0;
+                }
+                
+                .doc-status-modern {
+                    display: inline-block;
+                    padding: 0.375rem 0.875rem;
+                    border-radius: 9999px;
+                    font-size: 0.875rem;
+                    font-weight: 600;
+                    margin-bottom: 1rem;
+                }
+                
+                .doc-status-modern.completed {
+                    background: rgba(16, 185, 129, 0.1);
+                    color: var(--success);
+                }
+                
+                .doc-status-modern.processing {
+                    background: rgba(245, 158, 11, 0.1);
+                    color: var(--warning);
+                }
+                
+                .doc-actions-modern {
+                    display: flex;
+                    gap: 0.5rem;
+                }
+                
+                .doc-action-btn {
+                    flex: 1;
+                    padding: 0.5rem;
+                    background: var(--gray-50);
+                    border: 1px solid var(--gray-200);
+                    border-radius: var(--radius-md);
+                    font-size: 0.875rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                
+                .doc-action-btn:hover:not(:disabled) {
+                    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+                    color: white;
+                    border-color: transparent;
+                }
+                
+                .doc-action-btn:disabled {
+                    opacity: 0.5;
+                    cursor: not-allowed;
+                }
+                
+                @media (max-width: 968px) {
+                    .documents-grid-modern { 
+                        grid-template-columns: 1fr; 
+                    }
+                }
+            </style>
+            
+            <div class="vertical-layout">
+                <!-- 1. Upload Section (Full Width) -->
+                <div class="upload-section-full">
+                    <div class="card upload-card-modern">
+                        <div class="card-header">
+                            <h2>📤 Upload Study Material</h2>
+                            <p>Upload your documents to start learning with AI</p>
+                        </div>
+                        
+                        <div class="upload-zone-modern" id="uploadZone">
+                            <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt" multiple style="display:none;">
+                            
+                            <div class="upload-icon-container">
+                                <svg class="upload-icon-large" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                </svg>
+                            </div>
+                            
+                            <h3>Drag & Drop Files Here</h3>
+                            <p>or <strong>click to browse</strong></p>
+                            
+                            <div class="supported-formats">
+                                <span class="format-badge">📄 PDF</span>
+                                <span class="format-badge">📝 DOCX</span>
+                                <span class="format-badge">📑 TXT</span>
+                            </div>
+                            
+                            <div class="upload-limit">Max file size: 50MB</div>
+                        </div>
+
+                        <!-- Processing Progress (Hidden by default) -->
+                        <div class="processing-card-compact" id="processingCard" style="display:none;">
+                            <div class="processing-header">
+                                <div class="processing-spinner"></div>
+                                <div>
+                                    <h4>Processing Document</h4>
+                                    <p id="processingStatus">Extracting text...</p>
+                                </div>
+                            </div>
+                            <div class="progress-bar-modern">
+                                <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. AI Study Assistant (Full Width) -->
+                <div class="chat-section-full">
+                    <div class="chat-card-expanded">
+                        <div class="chat-header-big">
+                            <h2>
+                                <span style="font-size: 1.75rem;">🤖</span>
+                                AI Study Assistant
+                            </h2>
+                            <button class="clear-chat-btn" id="clearChatBtn" style="padding: 0.625rem 1.25rem; background: white; border: 2px solid var(--gray-200); border-radius: var(--radius-lg); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+                                <svg style="width: 16px; height: 16px; display: inline-block; vertical-align: middle; margin-right: 0.25rem;" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"/>
+                                </svg>
+                                Clear Chat
+                            </button>
+                        </div>
+                        
+                        <div class="chat-body-big">
+                            <div class="chat-messages-modern" id="chatMessages">
+                                <!-- Welcome Message -->
+                                <div class="chat-message assistant">
+                                    <div class="message-avatar">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2zm1-10C9.34 6 8 7.34 8 9h2c0-.55.45-1 1-1s1 .45 1 1c0 1-2 .75-2 3h2c0-1.5 2-1.5 2-3 0-1.66-1.34-3-3-3z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="message-content">
+                                        <div class="message-text">
+                                            👋 Hello! I'm your AI Study Assistant. Upload a document and I'll help you understand it better. You can ask me questions about the content, request summaries, or generate study materials.
+                                        </div>
+                                        <div class="message-time">Just now</div>
+                                    </div>
+                                </div>
+
+                                <!-- Sample conversation (for demo) -->
+                                <div class="chat-message user">
+                                    <div class="message-avatar">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="message-content">
+                                        <div class="message-text">
+                                            Can you summarize the main concepts from my uploaded document?
+                                        </div>
+                                        <div class="message-time">10:30 AM</div>
+                                    </div>
+                                </div>
+
+                                <div class="chat-message assistant">
+                                    <div class="message-avatar">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2zm1-10C9.34 6 8 7.34 8 9h2c0-.55.45-1 1-1s1 .45 1 1c0 1-2 .75-2 3h2c0-1.5 2-1.5 2-3 0-1.66-1.34-3-3-3z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="message-content">
+                                        <div class="message-text">
+                                            Of course! Once you upload a document, I can provide:
+                                            <br><br>
+                                            ✓ <strong>Key Points Summary</strong> - Main concepts at a glance<br>
+                                            ✓ <strong>Detailed Breakdown</strong> - In-depth explanation of topics<br>
+                                            ✓ <strong>Practice Questions</strong> - Test your understanding<br>
+                                            ✓ <strong>Flashcards</strong> - For quick review<br>
+                                            <br>
+                                            Just upload your document above to get started!
+                                        </div>
+                                        <div class="message-time">10:31 AM</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Chat Footer with Input -->
+                            <div class="chat-footer-big">
+                                <div class="chat-input-row">
+                                    <textarea 
+                                        id="chatInput" 
+                                        class="chat-input-big"
+                                        placeholder="Ask me anything about your documents..."
+                                        rows="1"
+                                    ></textarea>
+                                    <button class="send-btn-big" id="sendBtn">
+                                        <svg style="width: 20px; height: 20px;" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                        </svg>
+                                        Send
+                                    </button>
+                                </div>
+
+                                <!-- Quick Actions -->
+                                <div class="quick-actions-row">
+                                    <button class="quick-btn">📝 Summarize document</button>
+                                    <button class="quick-btn">🎯 Generate quiz</button>
+                                    <button class="quick-btn">🗂️ Create flashcards</button>
+                                    <button class="quick-btn">💡 Explain concepts</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Recent Documents (Full Width) -->
+                <div class="docs-section-full">
+                    <div class="card documents-card-modern">
+                        <div class="card-header">
+                            <h2>📚 Recent Documents</h2>
+                            <a href="documents.html" class="view-all-link">View All →</a>
+                        </div>
+                        
+                        <div class="documents-grid-modern" id="documentsGrid">
+                            <!-- Sample Documents -->
+                            <div class="doc-card-modern">
+                                <div class="doc-icon-large">📄</div>
+                                <h4>Machine Learning Basics.pdf</h4>
+                                <p class="doc-meta-modern">2.5 MB • 2 days ago</p>
+                                <span class="doc-status-modern completed">✓ Completed</span>
+                                <div class="doc-actions-modern">
+                                    <button class="doc-action-btn">Quiz</button>
+                                    <button class="doc-action-btn">Flashcards</button>
+                                    <button class="doc-action-btn">View</button>
+                                </div>
+                            </div>
+
+                            <div class="doc-card-modern">
+                                <div class="doc-icon-large">📝</div>
+                                <h4>React Hooks Tutorial.docx</h4>
+                                <p class="doc-meta-modern">1.8 MB • 5 hours ago</p>
+                                <span class="doc-status-modern processing">⏳ Processing</span>
+                                <div class="doc-actions-modern">
+                                    <button class="doc-action-btn" disabled>Processing...</button>
+                                </div>
+                            </div>
+
+                            <div class="doc-card-modern">
+                                <div class="doc-icon-large">🐍</div>
+                                <h4>Python Data Structures.pdf</h4>
+                                <p class="doc-meta-modern">3.2 MB • 1 week ago</p>
+                                <span class="doc-status-modern completed">✓ Completed</span>
+                                <div class="doc-actions-modern">
+                                    <button class="doc-action-btn">Quiz</button>
+                                    <button class="doc-action-btn">Flashcards</button>
+                                    <button class="doc-action-btn">View</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="../js/auth.js"></script>
+    <script type="module" src="../js/study-engine.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobileMenuBtn')?.addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('active');
+        });
+
+        // Upload zone interactions
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                console.log('Files to upload:', files);
+                // Show processing card
+                document.getElementById('processingCard').style.display = 'block';
+                simulateProcessing();
+            }
+        }
+
+        function simulateProcessing() {
+            let progress = 0;
+            const progressBar = document.getElementById('progressBar');
+            const statusText = document.getElementById('processingStatus');
+            const statuses = [
+                'Extracting text...',
+                'Analyzing content...',
+                'Generating summary...',
+                'Creating quiz questions...',
+                'Building flashcards...',
+                'Finalizing...'
+            ];
+            let statusIndex = 0;
+
+            const interval = setInterval(() => {
+                progress += 2;
+                progressBar.style.width = progress + '%';
+                
+                if (progress % 20 === 0 && statusIndex < statuses.length) {
+                    statusText.textContent = statuses[statusIndex];
+                    statusIndex++;
+                }
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    statusText.textContent = 'Complete!';
+                    setTimeout(() => {
+                        document.getElementById('processingCard').style.display = 'none';
+                        alert('Document processed successfully! (Demo mode)');
+                    }, 1000);
+                }
+            }, 100);
+        }
+
+        // Chat auto-resize textarea
+        const chatInput = document.getElementById('chatInput');
+        chatInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Send message on Enter (but allow Shift+Enter for new line)
+        chatInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                console.log('Sending message:', message);
+                
+                // Add user message
+                const chatBody = document.querySelector('.chat-body-big');
+                const userMsg = document.createElement('div');
+                userMsg.className = 'chat-message user';
+                userMsg.innerHTML = `
+                    <div class="message-avatar">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <div class="message-text">${message}</div>
+                        <div class="message-time">Just now</div>
+                    </div>
+                `;
+                chatBody.appendChild(userMsg);
+                chatBody.scrollTop = chatBody.scrollHeight;
+                
+                input.value = '';
+                input.style.height = 'auto';
+                
+                // Simulate AI response
+                setTimeout(() => {
+                    const aiMsg = document.createElement('div');
+                    aiMsg.className = 'chat-message assistant';
+                    aiMsg.innerHTML = `
+                        <div class="message-avatar">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-4h2v2h-2zm1-10C9.34 6 8 7.34 8 9h2c0-.55.45-1 1-1s1 .45 1 1c0 1-2 .75-2 3h2c0-1.5 2-1.5 2-3 0-1.66-1.34-3-3-3z"/>
+                            </svg>
+                        </div>
+                        <div class="message-content">
+                            <div class="message-text">I received your message! In production, I would analyze your question and provide detailed insights based on your uploaded documents. 🤖</div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                    `;
+                    chatBody.appendChild(aiMsg);
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                }, 1000);
+            }
+        }
+        
+        // Quick action buttons
+        document.querySelectorAll('.quick-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.getElementById('chatInput').value = this.textContent.trim();
+                document.getElementById('chatInput').focus();
+            });
+        });
+        
+        // Clear chat
+        document.getElementById('clearChatBtn')?.addEventListener('click', function() {
+            if (confirm('Clear chat history?')) {
+                const chatBody = document.querySelector('.chat-body-big');
+                const messages = chatBody.querySelectorAll('.chat-message');
+                messages.forEach((msg, idx) => {
+                    if (idx > 0) msg.remove(); // Keep welcome message
+                });
+            }
+        });
+
+        console.log('✅ AI Study Engine - Vertical Layout with Expanded Chat');
+    </script>
+</body>
+</html>

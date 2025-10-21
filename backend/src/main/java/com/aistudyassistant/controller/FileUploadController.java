@@ -3,6 +3,8 @@ package com.aistudyassistant.controller;
 import com.aistudyassistant.model.UploadedFile;
 import com.aistudyassistant.service.AISummaryService;
 import com.aistudyassistant.service.FileStorageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,8 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class FileUploadController {
     
+    private static final Logger logger = LoggerFactory.getLogger(FileUploadController.class);
+    
     @Autowired
     private FileStorageService fileStorageService;
     
@@ -30,15 +34,34 @@ public class FileUploadController {
      */
     @PostMapping("/upload")
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
+        logger.info("Received file upload request: {}", file.getOriginalFilename());
+        
         try {
+            // Validate file
+            if (file.isEmpty()) {
+                logger.warn("Empty file received");
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "Cannot upload empty file");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            logger.info("File size: {} bytes", file.getSize());
+            logger.info("File type: {}", file.getContentType());
+            
             // Store file
             UploadedFile uploadedFile = fileStorageService.storeFile(file);
+            logger.info("File stored successfully with ID: {}", uploadedFile.getId());
             
             // Generate summary (async in production)
-            String summary = aiSummaryService.generateSummary(uploadedFile);
-            
-            // Update file with summary
-            uploadedFile = fileStorageService.updateFileSummary(uploadedFile.getId(), summary);
+            try {
+                String summary = aiSummaryService.generateSummary(uploadedFile);
+                uploadedFile = fileStorageService.updateFileSummary(uploadedFile.getId(), summary);
+                logger.info("Summary generated successfully");
+            } catch (Exception e) {
+                logger.warn("Failed to generate summary: {}", e.getMessage());
+                // Continue even if summary generation fails
+            }
             
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
@@ -48,9 +71,16 @@ public class FileUploadController {
             return ResponseEntity.ok(response);
             
         } catch (IOException e) {
+            logger.error("Failed to upload file", e);
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
             response.put("message", "Failed to upload file: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        } catch (Exception e) {
+            logger.error("Unexpected error during file upload", e);
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Unexpected error: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
